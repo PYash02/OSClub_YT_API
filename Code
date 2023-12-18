@@ -1,0 +1,29 @@
+import googleapiclient.discovery
+import pandas as pd
+
+api_service_name = "youtube"
+api_version = "v3"
+DEVELOPER_KEY = "" // You can enter your Developer_key here
+
+youtube = googleapiclient.discovery.build(
+    api_service_name, api_version, developerKey=DEVELOPER_KEY)
+
+request = youtube.commentThreads().list(
+    part="snippet",
+    videoId="tzpfyTFvU6M",
+    maxResults=100
+)
+response = request.execute()
+
+comments = []
+
+for item in response['items']:
+    comment = item['snippet']['topLevelComment']['snippet']
+    comments.append([
+        comment['authorDisplayName'],
+        comment['textDisplay']
+    ])
+
+df = pd.DataFrame(comments, columns=['author', 'text'])
+
+df.head(100)
